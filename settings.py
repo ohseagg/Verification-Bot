@@ -11,3 +11,7 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 # bot settings
 prefix = "!"
 description = "OHSEA Verification Bot"
+
+# ID's
+verified_role_id = 845223569034182726
+

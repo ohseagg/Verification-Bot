@@ -1,3 +1,4 @@
 discord.py
 mongoengine
-python-dotenv
+python-dotenv~=0.17.1
+requests~=2.25.1
