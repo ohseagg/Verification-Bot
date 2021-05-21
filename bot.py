@@ -21,7 +21,11 @@ bot = discord.ext.commands.Bot(command_prefix=prefix,
 
 
 @bot.command()
-async def verify(ctx, auth_code):
+async def verify(ctx, auth_code=None):
+    if auth_code is None:
+        await ctx.reply(embed=await error_embed("No email verification code "
+                                                "provided."))
+
     url = "http://api.ohsea.gg:8080/verify"
     payload = json.dumps({
         "id": ctx.author.id,
