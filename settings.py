@@ -8,6 +8,11 @@ dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
+# database setttings
+DBuser = os.getenv('DBuser')
+DBpass = os.getenv('DBpass')
+DBurl = os.getenv('DBurl')
+
 # bot settings
 prefix = "!"
 description = "OHSEA Verification Bot"
