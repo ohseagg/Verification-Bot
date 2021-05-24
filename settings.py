@@ -19,4 +19,4 @@ description = "OHSEA Verification Bot"
 
 # ID's
 verified_role_id = 845223569034182726
-
+verification_channel_id = 846190415980134430
