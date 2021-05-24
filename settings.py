@@ -8,6 +8,10 @@ dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
+# mailgun settings
+mailgun_API_key = os.getenv('mailgun_API_key')
+mailgun_base_URL = os.getenv('mailgun_base_URL')
+
 # database setttings
 DBuser = os.getenv('DBuser')
 DBpass = os.getenv('DBpass')

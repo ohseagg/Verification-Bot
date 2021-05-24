@@ -4,6 +4,8 @@ import pymongo
 from settings import DBuser, DBpass, DBurl
 from datetime import datetime
 
+from mailgun import email_auth_code
+
 client = pymongo.MongoClient(f"mongodb+srv://{DBuser}:{DBpass}@{DBurl}")
 db = client['ohsea']
 registered = db['registered_users']
@@ -28,6 +30,10 @@ async def addVerification(user: dict):
     # add to database
     verification.insert_one(user)
 
+    # email user their auth code
+    response = email_auth_code(auth_code, user['email'])
+    print(response)
+
 
 async def emailTaken(email: str):
     # search databases for that email
@@ -39,23 +45,23 @@ async def emailTaken(email: str):
 
 async def authCodeTaken(auth_code: int):
     # search database for that auth token
-    search = verification.find_one({"auth_code": auth_code})
+    search = verification.find_one({"auth_code": int(auth_code)})
     # return bool if it was found or not
     return search is not None
 
 
 async def idTaken(id: int):
     # search database for that id
-    search = registered.find_one({"_id": id})
+    search = registered.find_one({"_id": int(id)})
     # return bool if it was found or not
     return search is not None
 
 
-async def verify(id, auth_code):
+async def verifyUser(id, auth_code):
     # search database for that user from auth token
-    user = verification.find_one({"auth_code": auth_code})
+    user = verification.find_one({"auth_code": int(auth_code)})
     # remove from verification database
-    verification.delete_one(user)
+    verification.delete_one({"auth_code": int(auth_code)})
     # remove auth code field
     user.pop('auth_code')
     # update timestamp
@@ -64,6 +70,9 @@ async def verify(id, auth_code):
     user['_id'] = id
     # add to registered database
     registered.insert_one(user)
+
+    # return name of person verified in the form (First L)
+    return f"{user['first_name']} {user['last_name'][0]}"
 
 
 async def isEDUEmail(email: str, address=False):

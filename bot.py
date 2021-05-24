@@ -1,15 +1,15 @@
 from string import capwords
 
 import discord
-import requests
-import json
 
-from discord.ext import commands
+
+from discord.ext.commands import Context, Bot
 from embeds import error_embed, success_embed
 from settings import BOT_TOKEN, prefix, description, verified_role_id
 from settings import verification_channel_id
-from database import emailTaken, addVerification, verify
-from database import isEDUEmail, addEDUEmail
+from database import emailTaken, addVerification, verifyUser, idTaken
+from database import isEDUEmail, addEDUEmail, authCodeTaken
+from mailgun import email_auth_code
 
 # discord gateway intents
 intents = discord.Intents.default()
@@ -81,43 +81,41 @@ async def register(ctx):
 
 
 @bot.command()
-async def verify(ctx, auth_code=None):
+async def verify(ctx: discord.ext.commands.Context, auth_code=None):
+    # check if auth code was provided
+    if auth_code is None:
+        await ctx.send(embed=await error_embed("No email verification code "
+                                               "provided."))
+        # cancel the command
+        return
+
     # command can only be run verification channel
-    if ctx.channel.id != verification_channel_id:
+    elif ctx.channel.id != verification_channel_id:
         await ctx.send(embed=await error_embed(f"Command can only be run in "
                                                f"<#{verification_channel_id}>"))
         return
 
-    # check if auth code was provided
-    if auth_code is None:
-        await ctx.send(embed=await error_embed("No email verification code "
-                                                "provided."))
-        # cancel the command
+    # check if user is already verified
+    elif await idTaken(ctx.author.id):
+        await ctx.send(embed=await error_embed("Your ID is already registered."
+                                               "\n"
+                                               "If you think this was a "
+                                               "mistake "
+                                               "please contact an admin."))
         return
 
-    url = "http://api.ohsea.gg:8080/verify"
-    payload = json.dumps({
-        "id": ctx.author.id,
-        "auth_code": auth_code
-    })
-
-    # make request
-    response = requests.post(url, data=payload)
-
-    # if 403 from id already taken
-    if response.status_code == 403:
-        await ctx.reply(embed=await error_embed("Your account has already "
-                                                "been verified."))
-    # send error message only if a 400 error
-    elif response.status_code != 200:
+    # check if auth code is valid
+    elif not await authCodeTaken(auth_code):
         await ctx.reply(embed=await error_embed("Not a valid verification "
                                                 "code."))
-    # let in otherwise
-    else:
-        # response
-        await ctx.reply(embed=await success_embed("You're in! :smile:"))
-        # give role
-        await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
+        return
+
+    # verify user
+    nick = await verifyUser(ctx.author.id, auth_code)
+    await ctx.reply(embed=await success_embed("You're in! :smile:"))
+    # give role
+    await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
+    await ctx.author.edit(nick=nick)
 
 
 @bot.command()
@@ -131,5 +129,4 @@ async def addemail(ctx, address):
                                                  f'valid email address.'))
 
 # run the bot
-# INVITE LINK: https://discord.com/api/oauth2/authorize?client_id=844487751835451412&permissions=470150256&scope=bot
 bot.run(BOT_TOKEN)
