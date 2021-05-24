@@ -12,7 +12,7 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 mailgun_API_key = os.getenv('mailgun_API_key')
 mailgun_base_URL = os.getenv('mailgun_base_URL')
 
-# database setttings
+# database settings
 DBuser = os.getenv('DBuser')
 DBpass = os.getenv('DBpass')
 DBurl = os.getenv('DBurl')
@@ -22,5 +22,10 @@ prefix = "!"
 description = "OHSEA Verification Bot"
 
 # ID's
+guild_id = 822264218492862504
 verified_role_id = 846223942943506452
 verification_channel_id = 846209783290658826
+verification_log_channel_id = 846467953469685801
+
+# timezone for timestamp
+daylight_savings = True

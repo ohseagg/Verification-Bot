@@ -3,13 +3,13 @@ from string import capwords
 import discord
 
 
-from discord.ext.commands import Context, Bot
+from discord.ext.commands import Context
 from embeds import error_embed, success_embed
 from settings import BOT_TOKEN, prefix, description, verified_role_id
 from settings import verification_channel_id
 from database import emailTaken, addVerification, verifyUser, idTaken
 from database import isEDUEmail, addEDUEmail, authCodeTaken
-from mailgun import email_auth_code
+from logs import logRegistered, logVerified
 
 # discord gateway intents
 intents = discord.Intents.default()
@@ -81,6 +81,7 @@ async def register(ctx):
         await addVerification(user)
         await ctx.send(embed=await success_embed('Check your email for further'
                                                  ' instructions :smile:'))
+        await logRegistered(ctx, user, bot)
 
 
 @bot.command()
@@ -119,6 +120,7 @@ async def verify(ctx: discord.ext.commands.Context, auth_code=None):
     # give role
     await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
     await ctx.author.edit(nick=nick)
+    await logVerified(ctx, nick, bot)
 
 
 @bot.command()
@@ -130,6 +132,15 @@ async def addemail(ctx, address):
         await addEDUEmail(address)
         await ctx.send(embed=await success_embed(f'Added @{address} as a '
                                                  f'valid email address.'))
+
+
+@bot.command()
+async def test(ctx):
+    user = {'first_name': 'Brandon',
+            'last_name': 'Ly',
+            'email': '340926187@gapps.yrdsb.ca'}
+    await logRegistered(ctx, user, bot)
+    await logVerified(ctx, "Brandon L", bot)
 
 # run the bot
 bot.run(BOT_TOKEN)
