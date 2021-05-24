@@ -3,7 +3,7 @@ from os.path import join, dirname
 
 from dotenv import load_dotenv
 
-if not os.getenv('dev') == 'True':
+if not os.getenv('production') == 'true':
     # load .env file and vars if in dev mode
     dotenv_path = join(dirname(__file__), '.env')
     load_dotenv(dotenv_path)

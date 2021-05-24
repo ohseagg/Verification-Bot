@@ -134,13 +134,5 @@ async def addemail(ctx, address):
                                                  f'valid email address.'))
 
 
-@bot.command()
-async def test(ctx):
-    user = {'first_name': 'Brandon',
-            'last_name': 'Ly',
-            'email': '340926187@gapps.yrdsb.ca'}
-    await logRegistered(ctx, user, bot)
-    await logVerified(ctx, "Brandon L", bot)
-
 # run the bot
 bot.run(BOT_TOKEN)
