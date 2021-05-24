@@ -3,9 +3,11 @@ from os.path import join, dirname
 
 from dotenv import load_dotenv
 
-# load .env file and vars
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+if not os.getenv('dev'):
+    # load .env file and vars if in dev mode
+    dotenv_path = join(dirname(__file__), '.env')
+    load_dotenv(dotenv_path)
+
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 # mailgun settings
