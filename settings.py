@@ -22,5 +22,5 @@ prefix = "!"
 description = "OHSEA Verification Bot"
 
 # ID's
-verified_role_id = 845223569034182726
-verification_channel_id = 846190415980134430
+verified_role_id = 846223942943506452
+verification_channel_id = 846209783290658826

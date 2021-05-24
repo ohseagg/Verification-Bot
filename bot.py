@@ -65,12 +65,15 @@ async def register(ctx):
 
         # else tell them its not a valid edu email
         await ctx.send(embed=await error_embed('That is not a valid '
-                                               'EDU email!'))
+                                               'EDU email!'
+                                               '\n\n'
+                                               'Contact modmail if you\'d'
+                                               'like to add yours.'))
 
     # check if email is already used
     if await emailTaken(msg.content):
         await ctx.send(embed=await error_embed('Your email is already taken!'
-                                               '\n\nPlease contact an admin'
+                                               '\n\nPlease contact modmail'
                                                'if you think this '
                                                'was a mistake.'))
     # otherwise add user to verification

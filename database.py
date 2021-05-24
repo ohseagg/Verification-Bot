@@ -32,7 +32,6 @@ async def addVerification(user: dict):
 
     # email user their auth code
     response = email_auth_code(auth_code, user['email'])
-    print(response)
 
 
 async def emailTaken(email: str):
