@@ -67,7 +67,7 @@ async def register(ctx):
         await ctx.send(embed=await error_embed('That is not a valid '
                                                'EDU email!'
                                                '\n\n'
-                                               'Contact modmail if you\'d'
+                                               'Contact modmail if you\'d '
                                                'like to add yours.'))
 
     # check if email is already used
