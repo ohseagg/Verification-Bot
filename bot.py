@@ -53,7 +53,7 @@ async def register(ctx):
 
     while True:
         # get email
-        await ctx.send('What is your school email?')
+        await ctx.send('What is your **personal** school email?')
         msg = await bot.wait_for('message',
                                  check=messageCheck,
                                  timeout=1800)
