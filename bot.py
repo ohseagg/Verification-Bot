@@ -25,6 +25,12 @@ bot = discord.ext.commands.Bot(command_prefix=prefix,
                                allowed_mentions=allowed_mentions)
 
 
+@bot.event
+async def on_member_join(member):
+    # check if user was previously registered
+    pass
+
+
 @bot.command()
 async def register(ctx):
     if not isinstance(ctx.channel, discord.channel.DMChannel):

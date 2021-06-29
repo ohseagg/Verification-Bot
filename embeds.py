@@ -1,21 +1,6 @@
-import pytz
 from datetime import datetime
-from settings import daylight_savings
 
 import discord
-
-
-async def timestamp_string():
-    est = pytz.timezone('US/Eastern')
-    fmt = '%Y-%m-%d %I:%M:%S %p %Z'
-
-    winter = datetime.now()
-    summer = datetime.now()
-
-    if daylight_savings:
-        return summer.astimezone(est).strftime(fmt)
-    else:
-        return winter.astimezone(est).strftime(fmt)
 
 
 async def error_embed(message: str):
@@ -57,7 +42,9 @@ async def registration_embed(user: dict, user_id: int):
                     value=user['email'],
                     inline=True)
 
-    embed.set_footer(text=await timestamp_string(),
+    embed.timestamp = datetime.now()
+
+    embed.set_footer(text=f"ID: {user_id}",
                      icon_url="https://image.brandonly.me/ohsea/WhiteOnNavy.png")
 
     # return finished embed
@@ -71,7 +58,9 @@ async def verification_embed(user_id: int, nick: str):
     embed.add_field(name=f"User Verified",
                     value=f"<@{user_id}> ({nick}) just verified.")
 
-    embed.set_footer(text=await timestamp_string(),
+    embed.timestamp = datetime.now()
+
+    embed.set_footer(text=f"ID: {user_id}",
                      icon_url="https://image.brandonly.me/ohsea/WhiteOnNavy.png")
 
     # return finished embed
