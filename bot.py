@@ -9,10 +9,11 @@ from settings import BOT_TOKEN, prefix, description, verified_role_id
 from settings import verification_channel_id
 from database import emailTaken, addVerification, verifyUser, idTaken
 from database import isEDUEmail, addEDUEmail, authCodeTaken
-from logs import logRegistered, logVerified
+from database import getUserFromId
+from logs import logRegistered, logVerified, logRejoin
 
 # discord gateway intents
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 allowed_mentions = discord.AllowedMentions(everyone=False,
                                            users=True,
                                            roles=False)
@@ -28,7 +29,20 @@ bot = discord.ext.commands.Bot(command_prefix=prefix,
 @bot.event
 async def on_member_join(member):
     # check if user was previously registered
-    pass
+    if await idTaken(member.id):
+        # get user
+        user = await getUserFromId(member.id)
+        # set role and nick
+        nick = f"{user['first_name']} {user['last_name'][0]}"
+        await member.add_roles(member.guild.get_role(verified_role_id))
+        await member.edit(nick=nick)
+        # send a dm
+        channel = await member.create_dm()
+        await channel.send(f"Welcome back to the "
+                           f"OHSEA Discord {user['first_name']}! \n\n"
+                           f"If this isn't you, let an admin know :smile:")
+        # log it down
+        await logRejoin(member.id, nick, bot)
 
 
 @bot.command()

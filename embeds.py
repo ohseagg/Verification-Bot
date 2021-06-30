@@ -52,7 +52,7 @@ async def registration_embed(user: dict, user_id: int):
 
 
 async def verification_embed(user_id: int, nick: str):
-    # generate embed with red colour
+    # generate embed with green colour
     embed = discord.Embed(color=discord.Colour.green())
     # set title field
     embed.add_field(name=f"User Verified",
@@ -65,4 +65,21 @@ async def verification_embed(user_id: int, nick: str):
 
     # return finished embed
     return embed
+
+
+async def rejoin_embed(user_id: int, nick: str):
+    # generate embed with blue colour
+    embed = discord.Embed(color=discord.Colour.blue())
+    # set title field
+    embed.add_field(name=f"User Rejoined",
+                    value=f"<@{user_id}> ({nick}) just rejoined the server.")
+
+    embed.timestamp = datetime.now()
+
+    embed.set_footer(text=f"ID: {user_id}",
+                     icon_url="https://image.brandonly.me/ohsea/WhiteOnNavy.png")
+
+    # return finished embed
+    return embed
+
 

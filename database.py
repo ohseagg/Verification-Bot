@@ -85,3 +85,8 @@ async def isEDUEmail(email: str, address=False):
 
 async def addEDUEmail(address: str):
     edu_emails.insert_one({'address': address})
+
+
+async def getUserFromId(user_id: int):
+    # must only run if you know the user id exists
+    return registered.find_one({'_id': user_id})
