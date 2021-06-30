@@ -11,6 +11,7 @@ db = client['ohsea']
 registered = db['registered_users']
 verification = db['pending_verifications']
 edu_emails = db['edu_emails']
+invites = db['pending_invites']
 
 
 async def addVerification(user: dict):
@@ -67,6 +68,8 @@ async def verifyUser(id, auth_code):
     user['created'] = datetime.now()
     # update _id to discord id
     user['_id'] = id
+    # add default invited amount
+    user['invited'] = 0
     # add to registered database
     registered.insert_one(user)
 
@@ -90,3 +93,8 @@ async def addEDUEmail(address: str):
 async def getUserFromId(user_id: int):
     # must only run if you know the user id exists
     return registered.find_one({'_id': user_id})
+
+
+async def newInvite(user_id: int, inviter_id: int):
+    user = {}
+

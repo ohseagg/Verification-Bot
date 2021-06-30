@@ -14,7 +14,7 @@ async def error_embed(message: str):
 
 
 async def success_embed(message: str):
-    # generate embed with red colour
+    # generate embed with green colour
     embed = discord.Embed(color=discord.Colour.green())
     # set title field
     embed.add_field(name=f"Success!", value=message)
@@ -24,7 +24,7 @@ async def success_embed(message: str):
 
 
 async def registration_embed(user: dict, user_id: int):
-    # generate embed with red colour
+    # generate embed with gold colour
     embed = discord.Embed(color=discord.Colour.gold())
     # set title field
     embed.add_field(name=f"User Registered",
@@ -82,4 +82,31 @@ async def rejoin_embed(user_id: int, nick: str):
     # return finished embed
     return embed
 
+
+async def infoCheckEmbed(user: dict, user_id: int):
+    # generate embed with gold colour
+    embed = discord.Embed(color=discord.Colour.gold())
+    # set title field
+    embed.add_field(name=f"Is this info correct?",
+                    value=f"Please double check your information.",
+                    inline=False)
+
+    # add name fields
+    embed.add_field(name=f"First Name",
+                    value=user['first_name'],
+                    inline=True)
+    embed.add_field(name=f"Last Name",
+                    value=user['last_name'],
+                    inline=True)
+    embed.add_field(name=f"Email",
+                    value=user['email'],
+                    inline=True)
+
+    embed.timestamp = datetime.now()
+
+    embed.set_footer(text=f"ID: {user_id}",
+                     icon_url="https://image.brandonly.me/ohsea/WhiteOnNavy.png")
+
+    # return finished embed
+    return embed
 

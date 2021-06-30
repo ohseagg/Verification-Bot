@@ -1,10 +1,11 @@
+import asyncio
 from string import capwords
 
+import DiscordUtils
 import discord
 
-
 from discord.ext.commands import Context
-from embeds import error_embed, success_embed
+from embeds import error_embed, success_embed, infoCheckEmbed
 from settings import BOT_TOKEN, prefix, description, verified_role_id
 from settings import verification_channel_id
 from database import emailTaken, addVerification, verifyUser, idTaken
@@ -24,6 +25,8 @@ bot = discord.ext.commands.Bot(command_prefix=prefix,
                                description=description,
                                case_insensitive=True,
                                allowed_mentions=allowed_mentions)
+# invite tracker
+tracker = DiscordUtils.InviteTracker(bot)
 
 
 @bot.event
@@ -39,10 +42,19 @@ async def on_member_join(member):
         # send a dm
         channel = await member.create_dm()
         await channel.send(f"Welcome back to the "
-                           f"OHSEA Discord {user['first_name']}! \n\n"
-                           f"If this isn't you, let an admin know :smile:")
+                           f"OHSEA Discord {user['first_name']}! "
+                           f"I've automagically applied "
+                           f"your verification again."
+                           f"\n\n"
+                           f"If you think this was a mistake, "
+                           f"let an admin know :smile:")
         # log it down
         await logRejoin(member.id, nick, bot)
+
+    # otherwise log down the inviter
+    else:
+        # get inviter
+        inviter = await tracker.fetch_inviter(member)
 
 
 @bot.command()
@@ -96,12 +108,32 @@ async def register(ctx):
                                                '\n\nPlease contact modmail'
                                                'if you think this '
                                                'was a mistake.'))
+        return
+
+    # get confirmation
+    await ctx.send(embed=await infoCheckEmbed(user, ctx.author.id))
+
+    def confirmCheck(react, person):
+        return person == ctx.author and \
+               (str(react.emoji) == '✅' or str(react.emoji == '❌'))
+
+    try:
+        reaction, member = await bot.wait_for(event='reaction_add',
+                                              timeout=60.0,
+                                              check=confirmCheck)
+        # exit if wrong info
+        if str(reaction.emoji) == '❌':
+            await ctx.send("Try again with `!register`")
+            return
+    except asyncio.TimeoutError:
+        await ctx.send('Timed out. Please try again.')
+        return
+
     # otherwise add user to verification
-    else:
-        await addVerification(user)
-        await ctx.send(embed=await success_embed('Check your email for further'
-                                                 ' instructions :smile:'))
-        await logRegistered(ctx, user, bot)
+    await addVerification(user)
+    await ctx.send(embed=await success_embed('Check your email for further'
+                                             ' instructions :smile:'))
+    await logRegistered(ctx, user, bot)
 
 
 @bot.command()
