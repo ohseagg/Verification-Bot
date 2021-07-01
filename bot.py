@@ -119,7 +119,9 @@ async def register(ctx):
         return
 
     # get confirmation
-    await ctx.send(embed=await infoCheckEmbed(user, ctx.author.id))
+    msg = await ctx.send(embed=await infoCheckEmbed(user, ctx.author.id))
+    await msg.add_reaction('✅')
+    await msg.add_reaction('❌')
 
     def confirmCheck(react, person):
         return person == ctx.author and \
