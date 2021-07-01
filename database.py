@@ -96,5 +96,26 @@ async def getUserFromId(user_id: int):
 
 
 async def newInvite(user_id: int, inviter_id: int):
-    user = {}
+    invites.insert_one({'_id': user_id, 'inviter': inviter_id})
 
+
+async def removeInvite(user_id: int):
+    invites.delete_one({'_id': user_id})
+
+
+async def wasInvited(user_id: int):
+    # search database for that id
+    search = invites.find_one({"_id": user_id})
+    # return bool if it was found or not
+    return search is not None
+
+
+async def useInvite(user_id: int):
+    # search database for that id
+    search = invites.find_one({"_id": user_id})
+    if search is None:
+        return
+    else:
+        registered.update_one({'_id': search['inviter']},
+                              {'$inc': {'invited': 1}},
+                              upsert=False)

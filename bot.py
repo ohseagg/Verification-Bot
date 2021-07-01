@@ -11,6 +11,7 @@ from settings import verification_channel_id
 from database import emailTaken, addVerification, verifyUser, idTaken
 from database import isEDUEmail, addEDUEmail, authCodeTaken
 from database import getUserFromId
+from database import newInvite, wasInvited, removeInvite
 from logs import logRegistered, logVerified, logRejoin
 
 # discord gateway intents
@@ -55,6 +56,13 @@ async def on_member_join(member):
     else:
         # get inviter
         inviter = await tracker.fetch_inviter(member)
+        await newInvite(member.id, inviter.id)
+
+
+@bot.event
+async def on_member_remove(member):
+    if await wasInvited(member.id):
+        await removeInvite(member.id)
 
 
 @bot.command()
