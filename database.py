@@ -116,6 +116,10 @@ async def useInvite(user_id: int):
     if search is None:
         return
     else:
+        # update invite count
         registered.update_one({'_id': search['inviter']},
                               {'$inc': {'invited': 1}},
                               upsert=False)
+
+        # remove the pending invite
+        invites.delete_one({'_id': user_id})

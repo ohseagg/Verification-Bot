@@ -11,7 +11,7 @@ from settings import verification_channel_id
 from database import emailTaken, addVerification, verifyUser, idTaken
 from database import isEDUEmail, addEDUEmail, authCodeTaken
 from database import getUserFromId
-from database import newInvite, wasInvited, removeInvite
+from database import newInvite, wasInvited, removeInvite, useInvite
 from logs import logRegistered, logVerified, logRejoin
 
 # discord gateway intents
@@ -181,6 +181,10 @@ async def verify(ctx: discord.ext.commands.Context, auth_code=None):
     await ctx.author.add_roles(ctx.guild.get_role(verified_role_id))
     await ctx.author.edit(nick=nick)
     await logVerified(ctx, nick, bot)
+
+    # log invite if was invited
+    if await wasInvited(ctx.author.id):
+        await useInvite(ctx.author.id)
 
 
 @bot.command()
